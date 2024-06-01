@@ -56,6 +56,7 @@ def main():
 
     while not glfw.window_should_close(window):
         glClear(GL_COLOR_BUFFER_BIT)
+        glPointSize(5.0)
         glColor3f(0, 1, 0)
         draw_ellipse(0, 0, 150, 100)
         glfw.swap_buffers(window)

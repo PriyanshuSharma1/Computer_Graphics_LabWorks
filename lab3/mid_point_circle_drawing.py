@@ -45,6 +45,7 @@ def main():
     while not glfw.window_should_close(window):
         glClear(GL_COLOR_BUFFER_BIT)
         glColor3f(1, 0, 0)
+        glPointSize(3.0)
         draw_circle(0, 0, 100)
         glfw.swap_buffers(window)
         glfw.poll_events()
