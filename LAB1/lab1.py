@@ -47,7 +47,7 @@ def draw():
     pygame.draw.polygon(screen, white, [(393, 389), (353, 441), (433, 441)])
     
     # Draw head hat
-    pygame.draw.rect(screen, red, (281, 439, 223, 27))
+    pygame.draw.rect(screen, (0,0,0,1), (281, 439, 223, 27))
     
     # Draw mask
     pygame.draw.rect(screen, white, (0, 539, 433, 485))
@@ -110,7 +110,7 @@ def main():
 
     # Set up the display
     global screen
-    screen = pygame.display.set_mode((1024, 1024))  # Set screen size
+    screen = pygame.display.set_mode((500, 500))  # Set screen size
     pygame.display.set_caption("Mountain Scene")    # Set window title
 
     clock = pygame.time.Clock()  # Create a Clock object to control frame rate
@@ -127,9 +127,11 @@ def main():
         draw()  # Call the draw function to draw the logo with "NTB" integrated
 
         pygame.display.flip()  # Update the display
-        clock.tick(60)         # Cap the frame rate at 60 FPS
+        clock.tick(69)         # Cap the frame rate at 60 FPS
 
     pygame.quit()  # Clean up and quit Pygame when the loop exits
 
 if __name__ == "__main__":
     main()
+
+    #also write down the questions i might be asked in the viva exam of this lab works

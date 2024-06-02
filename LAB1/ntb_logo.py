@@ -48,7 +48,6 @@ def main():
         draw_rectangle((0, 0, 1), 1, 2)
 
         pygame.display.flip()
-        pygame.time.wait(10)
 
 if __name__ == "__main__":
     main()

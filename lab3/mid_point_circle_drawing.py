@@ -4,12 +4,12 @@ import math
 from OpenGL.GLU import gluOrtho2D
 
 def draw_circle(xc, yc, r):
-    x = 0
-    y = r
+    x = r
+    y = 0
     d = 1 - r
 
     glBegin(GL_POINTS)
-    while x <= y:
+    while y <= x:
         glVertex2i(xc + x, yc + y)
         glVertex2i(xc - x, yc + y)
         glVertex2i(xc + x, yc - y)
@@ -39,13 +39,12 @@ def main():
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     gluOrtho2D(-400, 400, -400, 400)
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
+
 
     while not glfw.window_should_close(window):
         glClear(GL_COLOR_BUFFER_BIT)
         glColor3f(1, 0, 0)
-        glPointSize(3.0)
+        glPointSize(1.0)
         draw_circle(0, 0, 100)
         glfw.swap_buffers(window)
         glfw.poll_events()

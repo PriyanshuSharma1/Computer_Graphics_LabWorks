@@ -18,6 +18,7 @@ def rotate(vertices, angle):
         [0, 0, 1]
     ])
     vertices = np.hstack((vertices, np.ones((vertices.shape[0], 1))))
+    print(vertices)
     return np.dot(vertices, rotation_matrix.T)[:, :2]
 
 def main():
