@@ -16,18 +16,34 @@ edges = [
 ]
 
 # Function to draw the cube
-def draw_cube():
+def draw_cube(vertices):
     glBegin(GL_LINES)
     for edge in edges:
         for vertex in edge:
             glVertex3fv(vertices[vertex])
     glEnd()
 
+def shear_vertices(vertices, shx, shy, shz):
+    shearing_matrix = np.array([
+        [1, shx, shx, 0],
+        [shy, 1, shy, 0],
+        [shz, shz, 1, 0],
+        [0, 0, 0, 1]
+    ])
+
+    sheared_vertices = []
+    for vertex in vertices:
+        vertex = np.append(vertex, 1)
+        sheared_vertex = np.dot(shearing_matrix, vertex)
+        sheared_vertices.append(sheared_vertex[:3])
+
+    return sheared_vertices
+
 def main():
     if not glfw.init():
         return
 
-    window = glfw.create_window(800, 800, "3D Transformation", None, None)
+    window = glfw.create_window(800, 800, "3D Shearing", None, None)
     if not window:
         glfw.terminate()
         return
@@ -41,11 +57,8 @@ def main():
     gluPerspective(45, 1, 0.1, 50.0)
     glMatrixMode(GL_MODELVIEW)
 
-    # Translation vector
-    translation = np.array([2.0, 1.0, -10.0])
-
-    # Rotation angle
-    rotation_angle = 45  # 45 degrees
+    # Shearing factors
+    shx, shy, shz = 0.5, 0.2, 0.0
 
     while not glfw.window_should_close(window):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -56,16 +69,12 @@ def main():
 
         # Draw the original cube
         glColor3f(1, 0, 0)  # Red color for the original cube
-        draw_cube()
+        draw_cube(vertices)
 
-        
-
-        # Apply rotation and draw the rotated cube
-        glPushMatrix()
-        glRotatef(rotation_angle, 1, 1, 1)  # Rotate around the diagonal axis
-        glColor3f(0, 0, 1)  # Blue color for the rotated cube
-        draw_cube()
-        glPopMatrix()
+        # Apply shearing and draw the sheared cube
+        sheared_vertices = shear_vertices(vertices, shx, shy, shz)
+        glColor3f(0, 1, 0)  # Green color for the sheared cube
+        draw_cube(sheared_vertices)
 
         glfw.swap_buffers(window)
         glfw.poll_events()

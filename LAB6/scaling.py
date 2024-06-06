@@ -27,7 +27,7 @@ def main():
     if not glfw.init():
         return
 
-    window = glfw.create_window(800, 800, "3D Transformation", None, None)
+    window = glfw.create_window(800, 800, "3D Scaling", None, None)
     if not window:
         glfw.terminate()
         return
@@ -41,11 +41,8 @@ def main():
     gluPerspective(45, 1, 0.1, 50.0)
     glMatrixMode(GL_MODELVIEW)
 
-    # Translation vector
-    translation = np.array([2.0, 1.0, -10.0])
-
-    # Rotation angle
-    rotation_angle = 45  # 45 degrees
+    # Scaling factors
+    scaling_factors = np.array([1.5, 0.5, 1.0])
 
     while not glfw.window_should_close(window):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -58,12 +55,10 @@ def main():
         glColor3f(1, 0, 0)  # Red color for the original cube
         draw_cube()
 
-        
-
-        # Apply rotation and draw the rotated cube
+        # Apply scaling and draw the scaled cube
         glPushMatrix()
-        glRotatef(rotation_angle, 1, 1, 1)  # Rotate around the diagonal axis
-        glColor3f(0, 0, 1)  # Blue color for the rotated cube
+        glScalef(*scaling_factors)
+        glColor3f(0, 1, 0)  # Green color for the scaled cube
         draw_cube()
         glPopMatrix()
 

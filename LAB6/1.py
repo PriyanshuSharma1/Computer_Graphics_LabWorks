@@ -58,7 +58,12 @@ def main():
         glColor3f(1, 0, 0)  # Red color for the original cube
         draw_cube()
 
-        
+        # Apply translation and draw the translated cube
+        glPushMatrix()
+        glTranslatef(*translation)
+        glColor3f(0, 1, 0)  # Green color for the translated cube
+        draw_cube()
+        glPopMatrix()
 
         # Apply rotation and draw the rotated cube
         glPushMatrix()

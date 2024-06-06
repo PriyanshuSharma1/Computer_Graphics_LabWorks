@@ -27,48 +27,29 @@ def main():
     if not glfw.init():
         return
 
-    window = glfw.create_window(800, 800, "3D Transformation", None, None)
+    window = glfw.create_window(800, 800, "3D Rotation", None, None)
     if not window:
         glfw.terminate()
         return
 
     glfw.make_context_current(window)
     glEnable(GL_DEPTH_TEST)
-
-    # Set the perspective
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    gluPerspective(45, 1, 0.1, 50.0)
-    glMatrixMode(GL_MODELVIEW)
-
-    # Translation vector
-    translation = np.array([2.0, 1.0, -10.0])
-
-    # Rotation angle
-    rotation_angle = 45  # 45 degrees
+    
+    rotation_angle = 0
 
     while not glfw.window_should_close(window):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
 
-        # Set the camera position
-        gluLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0)
-
-        # Draw the original cube
-        glColor3f(1, 0, 0)  # Red color for the original cube
+        glTranslatef(0.0, 0.0, -5.0)
+        glRotatef(rotation_angle, 1, 1, 1)
+        glColor3f(0, 1, 0)
         draw_cube()
-
-        
-
-        # Apply rotation and draw the rotated cube
-        glPushMatrix()
-        glRotatef(rotation_angle, 1, 1, 1)  # Rotate around the diagonal axis
-        glColor3f(0, 0, 1)  # Blue color for the rotated cube
-        draw_cube()
-        glPopMatrix()
 
         glfw.swap_buffers(window)
         glfw.poll_events()
+
+        rotation_angle += 1
 
     glfw.terminate()
 
