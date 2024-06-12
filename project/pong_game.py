@@ -1,13 +1,17 @@
 import pygame
 import random
+from OpenGL.GL import *
+from OpenGL.GLU import *
 
-# Initialize the game
+# Initialize Pygame
 pygame.init()
 
 # Set up the game window
+ball_speed=0.1
+paddle_speed=0.2
 window_width = 800
-window_height = 400
-window = pygame.display.set_mode((window_width, window_height))
+window_height =700
+window = pygame.display.set_mode((window_width, window_height), pygame.OPENGL | pygame.DOUBLEBUF)
 pygame.display.set_caption("Pong Game")
 
 # Set up colors
@@ -17,7 +21,7 @@ WHITE = (255, 255, 255)
 # Set up the paddles
 paddle_width = 10
 paddle_height = 60
-paddle_speed = 0.5
+paddle_speed = paddle_speed
 
 paddle1_x = 20
 paddle1_y = window_height // 2 - paddle_height // 2
@@ -27,8 +31,8 @@ paddle2_y = window_height // 2 - paddle_height // 2
 
 # Set up the ball
 ball_size = 10
-ball_speed_x = 0.5
-ball_speed_y = 0.5
+ball_speed_x = ball_speed
+ball_speed_y = ball_speed
 ball_x = window_width // 2 - ball_size // 2
 ball_y = window_height // 2 - ball_size // 2
 
@@ -39,6 +43,24 @@ font = pygame.font.Font(None, 36)
 
 # Set up the game over screen
 game_over = False
+
+# OpenGL setup
+glMatrixMode(GL_PROJECTION)
+glLoadIdentity()
+gluOrtho2D(0, window_width, window_height, 0)
+glMatrixMode(GL_MODELVIEW)
+glEnable(GL_BLEND)
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+# Function to draw a rectangle
+def draw_rect(x, y, width, height, color):
+    glColor3fv(color)
+    glBegin(GL_QUADS)
+    glVertex2f(x, y)
+    glVertex2f(x + width, y)
+    glVertex2f(x + width, y + height)
+    glVertex2f(x, y + height)
+    glEnd()
 
 # Game loop
 running = True
@@ -78,31 +100,33 @@ while running:
         score2 += 1
         ball_x = window_width // 2 - ball_size // 2
         ball_y = window_height // 2 - ball_size // 2
-        ball_speed_x = random.choice([-0.5, 0.5])
-        ball_speed_y = random.choice([-0.5, 0.5])
+        ball_speed_x = random.choice([-ball_speed, ball_speed])
+        ball_speed_y = random.choice([-ball_speed, ball_speed])
     if ball_x >= window_width - ball_size:
         score1 += 1
         ball_x = window_width // 2 - ball_size // 2
         ball_y = window_height // 2 - ball_size // 2
-        ball_speed_x = random.choice([-1, 1])
-        ball_speed_y = random.choice([-1, 1])
+        ball_speed_x = random.choice([-ball_speed,ball_speed])
+        ball_speed_y = random.choice([-ball_speed, ball_speed])
 
     # Clear the screen
-    window.fill(BLACK)
+    glClear(GL_COLOR_BUFFER_BIT)
 
     # Draw the paddles
-    pygame.draw.rect(window, WHITE, (paddle1_x, paddle1_y, paddle_width, paddle_height))
-    pygame.draw.rect(window, WHITE, (paddle2_x, paddle2_y, paddle_width, paddle_height))
+    draw_rect(paddle1_x, paddle1_y, paddle_width, paddle_height, WHITE)
+    draw_rect(paddle2_x, paddle2_y, paddle_width, paddle_height, WHITE)
 
     # Draw the ball
-    pygame.draw.rect(window, WHITE, (ball_x, ball_y, ball_size, ball_size))
+    draw_rect(ball_x, ball_y, ball_size, ball_size, WHITE)
 
     # Draw the score
     score_text = font.render(str(score1) + " - " + str(score2), True, WHITE)
-    window.blit(score_text, (window_width // 2 - score_text.get_width() // 2, 10))
+    text_surface = pygame.image.tostring(score_text, 'RGBA', True)
+    glRasterPos2d(window_width // 2 - score_text.get_width() // 2, 10)
+    glDrawPixels(score_text.get_width(), score_text.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, text_surface)
 
     # Update the display
-    pygame.display.update()
+    pygame.display.flip()
 
     # Check for game over
     if score1 == 5 or score2 == 5:
@@ -124,20 +148,27 @@ while running:
                     game_over = False
 
         # Clear the screen
-        window.fill(BLACK)
+        glClear(GL_COLOR_BUFFER_BIT)
 
         # Display game over text
         game_over_text = font.render("Game Over", True, WHITE)
-        window.blit(game_over_text, (window_width // 2 - game_over_text.get_width() // 2, window_height // 2 - game_over_text.get_height() // 2))
+        text_surface = pygame.image.tostring(game_over_text, 'RGBA', True)
+        glRasterPos2d(window_width // 2 - game_over_text.get_width() // 2, window_height // 2 - game_over_text.get_height() // 2)
+        glDrawPixels(game_over_text.get_width(), game_over_text.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, text_surface)
 
         # Display retry and exit instructions
         retry_text = font.render("Press 'R' to retry", True, WHITE)
-        window.blit(retry_text, (window_width // 2 - retry_text.get_width() // 2, window_height // 2 + retry_text.get_height() // 2))
+        text_surface = pygame.image.tostring(retry_text, 'RGBA', True)
+        glRasterPos2d(window_width // 2 - retry_text.get_width() // 2, window_height // 2 + retry_text.get_height() // 2)
+        glDrawPixels(retry_text.get_width(), retry_text.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, text_surface)
+
         exit_text = font.render("Press 'Q' to exit", True, WHITE)
-        window.blit(exit_text, (window_width // 2 - exit_text.get_width() // 2, window_height // 2 + exit_text.get_height() // 2 + retry_text.get_height()))
+        text_surface = pygame.image.tostring(exit_text, 'RGBA', True)
+        glRasterPos2d(window_width // 2 - exit_text.get_width() // 2, window_height // 2 + exit_text.get_height() // 2 + retry_text.get_height())
+        glDrawPixels(exit_text.get_width(), exit_text.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, text_surface)
 
         # Update the display
-        pygame.display.update()
+        pygame.display.flip()
 
 # Quit the game
 pygame.quit()
